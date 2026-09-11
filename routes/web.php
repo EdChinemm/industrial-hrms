@@ -1,0 +1,186 @@
+<?php
+
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AttendanceDeviceController;
+use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\AttendanceScanController;
+use App\Http\Controllers\AttendanceSyncController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmployeeBarcodeController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LeaveRequestController;
+use Illuminate\Support\Facades\Route;
+
+
+/*
+|--------------------------------------------------------------------------
+| Guest Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('guest')->group(function () {
+
+    Route::get(
+        '/login',
+        [LoginController::class, 'create']
+    )->name('login');
+
+    Route::post(
+        '/login',
+        [LoginController::class, 'store']
+    )->name('login.store');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::get(
+        '/dashboard',
+        [DashboardController::class, 'index']
+    )->name('dashboard');
+
+    Route::post(
+        '/logout',
+        [LoginController::class, 'destroy']
+    )->name('logout');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| HR / Administrator Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([
+    'auth',
+    'role:System Administrator,HR Officer',
+])->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Employees
+    |--------------------------------------------------------------------------
+    */
+
+    Route::resource(
+        'employees',
+        EmployeeController::class
+    )->except([
+        'destroy'
+    ]);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Employee Barcodes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post(
+        '/employees/{employee}/barcode',
+        [EmployeeBarcodeController::class, 'store']
+    )->name('employees.barcode.store');
+
+    Route::delete(
+        '/employees/{employee}/barcode',
+        [EmployeeBarcodeController::class, 'destroy']
+    )->name('employees.barcode.destroy');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Edge Attendance Capture
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/attendance/scan',
+        [AttendanceScanController::class, 'create']
+    )->name('attendance.scan');
+
+    Route::post(
+        '/attendance/scan',
+        [AttendanceScanController::class, 'store']
+    )->name('attendance.scan.store');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Edge Devices
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/edge-devices',
+        [AttendanceDeviceController::class, 'index']
+    )->name('edge-devices.index');
+
+    Route::post(
+        '/edge-devices/{attendanceDevice}/sync',
+        [AttendanceSyncController::class, 'store']
+    )->name('edge-devices.sync');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Leave Management
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/leave',
+        [LeaveRequestController::class, 'index']
+    )->name('leave.index');
+
+    Route::post(
+        '/leave',
+        [LeaveRequestController::class, 'store']
+    )->name('leave.store');
+
+    Route::put(
+        '/leave/{leaveRequest}/review',
+        [LeaveRequestController::class, 'review']
+    )->name('leave.review');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Reporting
+|--------------------------------------------------------------------------
+|
+| Supervisors may view reports but cannot modify HR records.
+|
+*/
+
+Route::middleware([
+    'auth',
+    'role:System Administrator,HR Officer,Supervisor',
+])->group(function () {
+
+    Route::get(
+        '/reports/attendance',
+        [AttendanceReportController::class, 'index']
+    )->name('reports.attendance');
+
+    Route::get(
+        '/reports/attendance/export',
+        [AttendanceReportController::class, 'export']
+    )->name('reports.attendance.export');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Default Route
+|--------------------------------------------------------------------------
+*/
+
+Route::redirect('/', '/login');
