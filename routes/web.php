@@ -10,6 +10,8 @@ use App\Http\Controllers\EmployeeBarcodeController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeaveRequestController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EarningsEstimatorController;
+use App\Http\Controllers\EmployeeBarcodePrintController;
 
 
 /*
@@ -174,6 +176,46 @@ Route::middleware([
         '/reports/attendance/export',
         [AttendanceReportController::class, 'export']
     )->name('reports.attendance.export');
+
+    /*
+|--------------------------------------------------------------------------
+| Printable Employee Barcode
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/employees/{employee}/barcode/print',
+    [EmployeeBarcodePrintController::class, 'show']
+)->name('employees.barcode.print');
+
+
+/*
+|--------------------------------------------------------------------------
+| Attendance-Based Earnings Estimator
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/earnings',
+    [EarningsEstimatorController::class, 'index']
+)->name('earnings.index');
+
+Route::post(
+    '/earnings/profiles/{employee}',
+    [EarningsEstimatorController::class, 'storeProfile']
+)->name('earnings.profile.store');
+
+Route::post(
+    '/earnings/periods',
+    [EarningsEstimatorController::class, 'storePeriod']
+)->name('earnings.period.store');
+
+Route::post(
+    '/earnings/periods/{payrollPeriod}/calculate',
+    [EarningsEstimatorController::class, 'calculate']
+)->name('earnings.calculate');
+
+
 });
 
 

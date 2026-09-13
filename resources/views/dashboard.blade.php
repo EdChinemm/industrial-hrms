@@ -162,4 +162,91 @@
 
 </div>
 
+<div class="section">
+
+    <div class="section-header">
+        <h2>Quick Actions</h2>
+    </div>
+
+    <div class="section-body">
+
+        <div
+            class="actions"
+            style="flex-wrap: wrap;"
+        >
+
+            @if (
+                in_array(
+                    auth()->user()->role?->name,
+                    [
+                        'System Administrator',
+                        'HR Officer'
+                    ],
+                    true
+                )
+            )
+
+                <a
+                    href="{{ route(
+                        'employees.create'
+                    ) }}"
+                    class="btn btn-primary"
+                >
+                    Register Employee
+                </a>
+
+                <a
+                    href="{{ route(
+                        'attendance.scan'
+                    ) }}"
+                    class="btn btn-secondary"
+                >
+                    Capture Attendance
+                </a>
+
+                <a
+                    href="{{ route(
+                        'edge-devices.index'
+                    ) }}"
+                    class="btn btn-secondary"
+                >
+                    Edge Synchronization
+                </a>
+
+                <a
+                    href="{{ route(
+                        'leave.index'
+                    ) }}"
+                    class="btn btn-secondary"
+                >
+                    Leave Management
+                </a>
+
+                <a
+                    href="{{ route(
+                        'earnings.index'
+                    ) }}"
+                    class="btn btn-secondary"
+                >
+                    Earnings Estimator
+                </a>
+
+            @endif
+
+            <a
+                href="{{ route(
+                    'reports.attendance'
+                ) }}"
+                class="btn btn-secondary"
+            >
+                Attendance Reports
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
 @endsection
+

@@ -167,6 +167,17 @@
                 >
                     @csrf
 
+
+                    <a
+    href="{{ route(
+        'employees.barcode.print',
+        $employee
+    ) }}"
+    class="btn btn-primary"
+    target="_blank"
+>
+    Print Barcode
+</a>
                     <button
                         type="submit"
                         class="btn btn-secondary"

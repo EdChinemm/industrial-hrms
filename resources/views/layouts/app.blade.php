@@ -155,9 +155,28 @@
 
 @endif
 
-            <span class="nav-disabled">
-                Earnings Estimator
-            </span>
+            @if (
+    in_array(
+        auth()->user()->role?->name,
+        ['System Administrator', 'HR Officer'],
+        true
+    )
+)
+
+    <a
+        href="{{ route('earnings.index') }}"
+        class="{{ request()->routeIs('earnings.*') ? 'active' : '' }}"
+    >
+        Earnings Estimator
+    </a>
+
+@else
+
+    <span class="nav-disabled">
+        Earnings Estimator
+    </span>
+
+@endif
 
         </nav>
 
