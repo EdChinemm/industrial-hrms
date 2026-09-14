@@ -14,6 +14,63 @@
 <div class="section" style="margin-top: 0;">
 
     <div class="section-header">
+
+        <div>
+
+            <h2>
+                Edge Offline Provisioning
+            </h2>
+
+            <p
+                style="
+                    margin: 5px 0 0;
+                    color: #64748b;
+                    font-size: 13px;
+                "
+            >
+                Copy active employees, barcodes and
+                device details to the local Edge database.
+            </p>
+
+        </div>
+
+        <form
+            method="POST"
+            action="{{ route(
+                'edge-devices.provision'
+            ) }}"
+        >
+
+            @csrf
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Refresh Edge Cache
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="section-body">
+
+        <a
+            href="{{ route('edge-terminal') }}"
+            class="btn btn-secondary"
+            target="_blank"
+        >
+            Open Edge Terminal
+        </a>
+
+    </div>
+
+</div>
+
+<div class="section" style="margin-top: 0;">
+
+    <div class="section-header">
         <h2>Registered Edge Devices</h2>
     </div>
 

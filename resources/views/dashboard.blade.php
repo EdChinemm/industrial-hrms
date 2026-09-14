@@ -205,6 +205,14 @@
                 </a>
 
                 <a
+    href="{{ route('edge-terminal') }}"
+    class="btn btn-secondary"
+    target="_blank"
+>
+    Open Edge Terminal
+</a>
+
+                <a
                     href="{{ route(
                         'edge-devices.index'
                     ) }}"

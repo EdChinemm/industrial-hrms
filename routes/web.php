@@ -12,6 +12,29 @@ use App\Http\Controllers\LeaveRequestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EarningsEstimatorController;
 use App\Http\Controllers\EmployeeBarcodePrintController;
+use App\Http\Controllers\EdgeProvisionController;
+use App\Http\Controllers\EdgeTerminalController;
+
+
+/*
+|--------------------------------------------------------------------------
+| Standalone Edge Terminal
+|--------------------------------------------------------------------------
+|
+| This route intentionally does not require central HRMS authentication.
+| All employee, device and attendance operations use local SQLite data.
+|
+*/
+
+Route::get(
+    '/edge-terminal',
+    [EdgeTerminalController::class, 'create']
+)->name('edge-terminal');
+
+Route::post(
+    '/edge-terminal',
+    [EdgeTerminalController::class, 'store']
+)->name('edge-terminal.store');
 
 
 /*
@@ -64,6 +87,17 @@ Route::middleware([
     'auth',
     'role:System Administrator,HR Officer',
 ])->group(function () {
+
+/*
+|--------------------------------------------------------------------------
+| Edge Cache Provisioning
+|--------------------------------------------------------------------------
+*/
+
+Route::post(
+    '/edge-devices/provision',
+    [EdgeProvisionController::class, 'store']
+)->name('edge-devices.provision');
 
     /*
     |--------------------------------------------------------------------------
