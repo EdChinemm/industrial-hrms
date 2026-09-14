@@ -178,6 +178,27 @@
 
 @endif
 
+@if (
+    auth()->user()->role?->name
+    === 'System Administrator'
+)
+
+    <a
+        href="{{ route('users.index') }}"
+        class="{{ request()->routeIs('users.*') ? 'active' : '' }}"
+    >
+        User Management
+    </a>
+
+    <a
+        href="{{ route('audit.index') }}"
+        class="{{ request()->routeIs('audit.*') ? 'active' : '' }}"
+    >
+        Audit Logs
+    </a>
+
+@endif
+
         </nav>
 
         <div class="sidebar-footer">

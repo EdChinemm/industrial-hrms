@@ -230,4 +230,286 @@
 
 </div>
 
+<div class="section">
+
+    <div class="section-header">
+        <h2>Employee Documents</h2>
+    </div>
+
+    <div class="section-body">
+
+        <form
+            method="POST"
+            action="{{ route(
+                'employees.documents.store',
+                $employee
+            ) }}"
+            enctype="multipart/form-data"
+        >
+
+            @csrf
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        Document Type *
+                    </label>
+
+                    <select
+                        name="document_type"
+                        class="form-control"
+                        required
+                    >
+
+                        <option value="">
+                            Select Type
+                        </option>
+
+                        <option value="National ID">
+                            National ID
+                        </option>
+
+                        <option value="Employment Contract">
+                            Employment Contract
+                        </option>
+
+                        <option value="Certificate">
+                            Certificate
+                        </option>
+
+                        <option value="Medical">
+                            Medical
+                        </option>
+
+                        <option value="Training">
+                            Training
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Document Name *
+                    </label>
+
+                    <input
+                        type="text"
+                        name="document_name"
+                        class="form-control"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Issue Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="issue_date"
+                        class="form-control"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Expiry Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="expiry_date"
+                        class="form-control"
+                    >
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label>
+                        File *
+                    </label>
+
+                    <input
+                        type="file"
+                        name="document"
+                        class="form-control"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        required
+                    >
+
+                    <small>
+                        PDF, JPG or PNG. Maximum 5 MB.
+                    </small>
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label>
+                        Description
+                    </label>
+
+                    <textarea
+                        name="description"
+                        class="form-control"
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Upload Document
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="section">
+
+    <div class="section-header">
+        <h2>Stored Documents</h2>
+    </div>
+
+    <div class="table-wrap">
+
+        @if ($employee->documents->isEmpty())
+
+            <div class="empty-state">
+                No documents have been uploaded
+                for this employee.
+            </div>
+
+        @else
+
+            <table>
+
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Issued</th>
+                    <th>Expires</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                @foreach (
+                    $employee->documents
+                    as $document
+                )
+
+                    <tr>
+
+                        <td>
+                            {{ $document->document_name }}
+                        </td>
+
+                        <td>
+                            {{ $document->document_type }}
+                        </td>
+
+                        <td>
+                            {{ $document->issue_date
+                                ?->format('d M Y')
+                                ?? '—' }}
+                        </td>
+
+                        <td>
+                            {{ $document->expiry_date
+                                ?->format('d M Y')
+                                ?? '—' }}
+                        </td>
+
+                        <td>
+
+                            <div class="actions">
+
+                                <a
+                                    href="{{ route(
+                                        'employees.documents.download',
+                                        [
+                                            $employee,
+                                            $document
+                                        ]
+                                    ) }}"
+                                    class="btn btn-secondary"
+                                >
+                                    Download
+                                </a>
+
+                                <form
+                                    method="POST"
+                                    action="{{ route(
+                                        'employees.documents.destroy',
+                                        [
+                                            $employee,
+                                            $document
+                                        ]
+                                    ) }}"
+                                    onsubmit="
+                                        return confirm(
+                                            'Remove this document?'
+                                        );
+                                    "
+                                >
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-secondary"
+                                    >
+                                        Remove
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                @endforeach
+
+                </tbody>
+
+            </table>
+
+        @endif
+
+    </div>
+
+</div>
+
 @endsection

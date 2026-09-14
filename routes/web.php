@@ -14,6 +14,10 @@ use App\Http\Controllers\EarningsEstimatorController;
 use App\Http\Controllers\EmployeeBarcodePrintController;
 use App\Http\Controllers\EdgeProvisionController;
 use App\Http\Controllers\EdgeTerminalController;
+use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\EmployeeDocumentController;
+use App\Http\Controllers\UserManagementController;
+
 
 
 /*
@@ -86,7 +90,69 @@ Route::middleware('auth')->group(function () {
 Route::middleware([
     'auth',
     'role:System Administrator,HR Officer',
+    'audit',
 ])->group(function () {
+
+/*
+|--------------------------------------------------------------------------
+| Administrator Management
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([
+    'auth',
+    'role:System Administrator',
+    'audit',
+])->group(function () {
+
+    Route::get(
+        '/users',
+        [UserManagementController::class, 'index']
+    )->name('users.index');
+
+    Route::post(
+        '/users',
+        [UserManagementController::class, 'store']
+    )->name('users.store');
+
+    Route::put(
+        '/users/{user}',
+        [UserManagementController::class, 'update']
+    )->name('users.update');
+
+    Route::put(
+        '/users/{user}/password',
+        [UserManagementController::class, 'resetPassword']
+    )->name('users.password');
+
+    Route::get(
+        '/audit-logs',
+        [AuditLogController::class, 'index']
+    )->name('audit.index');
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Audit Activity
+|--------------------------------------------------------------------------
+*/
+
+Route::post(
+    '/employees/{employee}/documents',
+    [EmployeeDocumentController::class, 'store']
+)->name('employees.documents.store');
+
+Route::get(
+    '/employees/{employee}/documents/{document}/download',
+    [EmployeeDocumentController::class, 'download']
+)->name('employees.documents.download');
+
+Route::delete(
+    '/employees/{employee}/documents/{document}',
+    [EmployeeDocumentController::class, 'destroy']
+)->name('employees.documents.destroy');
 
 /*
 |--------------------------------------------------------------------------
@@ -198,7 +264,8 @@ Route::post(
 
 Route::middleware([
     'auth',
-    'role:System Administrator,HR Officer,Supervisor',
+    'role:System Administrator,HR Officer',
+    'audit',
 ])->group(function () {
 
     Route::get(
